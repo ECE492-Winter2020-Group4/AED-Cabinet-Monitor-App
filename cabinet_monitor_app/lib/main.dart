@@ -1,9 +1,20 @@
+import 'package:flutter/foundation.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
-
+void main() async{
+  // Modify with proper address/port
+  Socket sock = await Socket.connect('123.456.789.000', 80);
+  runApp(MyApp(sock));
+}
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+  Socket socket;
+
+  MyApp(Socket s){
+    this.socket = s;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,13 +31,18 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(
+          title: 'Flutter Demo Home Page',
+          channel: socket,
+      ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  final Socket channel;
+
+  MyHomePage({Key key, this.title, this.channel}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -55,6 +71,16 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
+  }
+
+  void _togglePower(){
+    widget.channel.write("POWER\n");
+  }
+
+  @override
+  void dispose(){
+    widget.channel.close();
+    super.dispose();
   }
 
   @override
@@ -100,6 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               ),
               color: Colors.red,
+              onPressed: _togglePower,
             ),
 
           ],
