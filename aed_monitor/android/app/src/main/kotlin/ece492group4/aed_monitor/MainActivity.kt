@@ -1,4 +1,4 @@
-package com.example.cabinet_monitor_app
+package ece492group4.aed_monitor
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

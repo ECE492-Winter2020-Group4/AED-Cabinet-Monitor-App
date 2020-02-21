@@ -1,6 +1,6 @@
-# cabinet_monitor_app
+# aed_monitor
 
-Application for communication with the ESP32 Device
+Application to connect to the AED Security Monitor Device
 
 ## Getting Started
 

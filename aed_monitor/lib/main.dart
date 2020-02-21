@@ -3,17 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 void main() async {
-  // modify with your true address/port
-  Socket sock = await Socket.connect('192.168.1.101', 80);
-  runApp(MyApp(sock));
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  Socket socket;
-
-  MyApp(Socket s) {
-    this.socket = s;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +16,6 @@ class MyApp extends StatelessWidget {
       title: title,
       home: MyHomePage(
         title: title,
-        channel: socket,
       ),
     );
   }
@@ -30,9 +23,9 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   final String title;
-  final Socket channel;
+//  final Socket channel;
 
-  MyHomePage({Key key, @required this.title, @required this.channel})
+  MyHomePage({Key key, @required this.title})
       : super(key: key);
 
   @override
@@ -115,28 +108,28 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _configDevice() {
-    widget.channel.write("CONFIG\n");
+//    widget.channel.write("CONFIG\n");
   }
 
   void _activeMode() {
-    widget.channel.write("ACTIVE\n");
+//    widget.channel.write("ACTIVE\n");
   }
 
   void _sleepMode() {
-    widget.channel.write("SLEEP\n");
+//    widget.channel.write("SLEEP\n");
   }
 
   void _sendEmail() {
-    widget.channel.write("EMAIL\n");
+//    widget.channel.write("EMAIL\n");
   }
 
   void _powerOff() {
-    widget.channel.write("POWER\n");
+//    widget.channel.write("POWER\n");
   }
 
   @override
   void dispose() {
-    widget.channel.close();
+//    widget.channel.close();
     super.dispose();
   }
 }

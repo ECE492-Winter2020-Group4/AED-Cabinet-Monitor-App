@@ -1,5 +1,5 @@
-name: cabinet_monitor_app
-description: Application for communication with the ESP32 Device
+name: aed_monitor
+description: Application to connect to the AED Security Monitor Device
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
