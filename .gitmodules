@@ -1,0 +1,3 @@
+[submodule "flutter_blue"]
+	path = flutter_blue
+	url = https://github.com/pauldemarco/flutter_blue
