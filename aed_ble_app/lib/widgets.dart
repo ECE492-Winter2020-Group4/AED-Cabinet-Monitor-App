@@ -12,7 +12,9 @@ class ScanResultTile extends StatelessWidget {
   final VoidCallback onTap;
 
   Widget _buildTitle(BuildContext context) {
-    if (result.device.name.length > 0) {
+    RegExp exp = new RegExp(r"^AED-ESP32-Monitor-(\d*)");
+    var match = exp.firstMatch(result.device.name);
+    if (result.device.name > 0) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,

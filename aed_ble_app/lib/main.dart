@@ -14,7 +14,7 @@ class FlutterBlueApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      color: Colors.lightBlue,
+      color: Colors.redAccent,
       home: StreamBuilder<BluetoothState>(
           stream: FlutterBlue.instance.state,
           initialData: BluetoothState.unknown,
@@ -37,18 +37,18 @@ class BluetoothOffScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlue,
+      backgroundColor: Colors.redAccent,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Icon(
-              Icons.bluetooth_disabled,
+              Icons.smartphone,
               size: 200.0,
               color: Colors.white54,
             ),
             Text(
-              'Bluetooth Adapter is ${state.toString().substring(15)}.',
+              'AED Cabinet Monitor',
               style: Theme.of(context)
                   .primaryTextTheme
                   .subhead
@@ -66,7 +66,7 @@ class FindDevicesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Find Devices'),
+        title: Text('Find AED Montior Devices'),
       ),
       body: RefreshIndicator(
         onRefresh: () =>
