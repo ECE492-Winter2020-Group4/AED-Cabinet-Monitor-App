@@ -1,6 +1,9 @@
-// Copyright 2017, Paul DeMarco.
-// All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
+/*
+widgets.dart
+
+This is the file that Communicates with connected bluetooth devices
+
+*/
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -12,9 +15,8 @@ class ScanResultTile extends StatelessWidget {
   final VoidCallback onTap;
 
   Widget _buildTitle(BuildContext context) {
-    RegExp exp = new RegExp(r"^AED-ESP32-Monitor-(\d*)");
-    var match = exp.firstMatch(result.device.name);
-    if (result.device.name > 0) {
+
+    if (result.device.name.length > 0) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,

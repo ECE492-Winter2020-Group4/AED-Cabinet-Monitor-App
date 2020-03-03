@@ -1,3 +1,10 @@
+/*
+main.dart
+
+This is the file that will start the mobile app in the main screen.
+This also contains the screens for establishing Bluetooth connection/disconnection
+
+*/
 
 import 'dart:async';
 import 'dart:math';
@@ -66,7 +73,8 @@ class FindDevicesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Find AED Montior Devices'),
+        title: Text('Find AED Monitor Devices'),
+        backgroundColor: Colors.redAccent,
       ),
       body: RefreshIndicator(
         onRefresh: () =>
