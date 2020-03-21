@@ -22,6 +22,8 @@ class FlutterBlueApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       color: Colors.redAccent,
+      theme: ThemeData.dark(),
+      debugShowCheckedModeBanner: false,
       home: StreamBuilder<BluetoothState>(
           stream: FlutterBlue.instance.state,
           initialData: BluetoothState.unknown,
@@ -173,6 +175,7 @@ class DeviceScreen extends StatelessWidget {
     ];
   }
 
+
   List<Widget> _buildServiceTiles(List<BluetoothService> services) {
     return services
         .map(
@@ -208,6 +211,7 @@ class DeviceScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(device.name),
+        backgroundColor: Colors.redAccent,
         actions: <Widget>[
           StreamBuilder<BluetoothDeviceState>(
             stream: device.state,
@@ -243,7 +247,9 @@ class DeviceScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
+
         child: Column(
+
           children: <Widget>[
             StreamBuilder<BluetoothDeviceState>(
               stream: device.state,
