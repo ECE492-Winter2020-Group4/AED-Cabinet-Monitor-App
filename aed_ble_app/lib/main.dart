@@ -7,11 +7,13 @@ This also contains the screens for establishing Bluetooth connection/disconnecti
 */
 
 import 'dart:async';
+import 'dart:convert' show utf8;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:aed_ble_app/widgets.dart';
+BluetoothCharacteristic targetCharacteristic;
 
 void main() {
   runApp(FlutterBlueApp());
@@ -71,6 +73,9 @@ class BluetoothOffScreen extends StatelessWidget {
 }
 
 class FindDevicesScreen extends StatelessWidget {
+
+  BluetoothDevice targetDevice;
+  BluetoothCharacteristic targetCharacteristic;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,6 +106,7 @@ class FindDevicesScreen extends StatelessWidget {
                             BluetoothDeviceState.connected) {
                           return RaisedButton(
                             child: Text('OPEN'),
+                            color: Colors.redAccent,
                             onPressed: () => Navigator.of(context).push(
                                 MaterialPageRoute(
                                     builder: (context) =>
@@ -148,7 +154,7 @@ class FindDevicesScreen extends StatelessWidget {
             );
           } else {
             return FloatingActionButton(
-                child: Icon(Icons.settings_input_antenna),
+                child: Icon(Icons.speaker_phone),
                 onPressed: () => FlutterBlue.instance
                     .startScan(timeout: Duration(seconds: 4)),
                 backgroundColor: Colors.redAccent
@@ -161,50 +167,50 @@ class FindDevicesScreen extends StatelessWidget {
 }
 
 class DeviceScreen extends StatelessWidget {
-  const DeviceScreen({Key key, this.device}) : super(key: key);
+  DeviceScreen({Key key, this.device}) : super(key: key);
 
   final BluetoothDevice device;
+  final String SERVICE_UUID = "0434f706-7af9-4349-8de8-701c14119b5a";
+  final String CHARACTERISTIC_UUID = "d1b6c2fe-b2d4-462d-9509-04d745b79d30";
 
-  List<int> _getRandomBytes() {
-    final math = Random();
-    return [
-      math.nextInt(255),
-      math.nextInt(255),
-      math.nextInt(255),
-      math.nextInt(255)
-    ];
+  TextEditingController moduleController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+
+  writeData(String data) async {
+    if (targetCharacteristic == null) return;
+
+    List<int> bytes = utf8.encode(data);
+    await targetCharacteristic.write(bytes);
+  }
+
+  sleepAction() {
+    writeData('SLEEP');
+  }
+
+  emailAction() {
+    writeData('EMAIL');
+  }
+
+  configAction() {
+    var configData = '${moduleController.text},${locationController.text}';
+    writeData(configData);
   }
 
 
-  List<Widget> _buildServiceTiles(List<BluetoothService> services) {
-    return services
-        .map(
-          (s) => ServiceTile(
-        service: s,
-        characteristicTiles: s.characteristics
-            .map(
-              (c) => CharacteristicTile(
-            characteristic: c,
-            onReadPressed: () => c.read(),
-            onWritePressed: () => c.write(_getRandomBytes()),
-            onNotificationPressed: () =>
-                c.setNotifyValue(!c.isNotifying),
-            descriptorTiles: c.descriptors
-                .map(
-                  (d) => DescriptorTile(
-                descriptor: d,
-                onReadPressed: () => d.read(),
-                onWritePressed: () => d.write(_getRandomBytes()),
-              ),
-            )
-                .toList(),
-          ),
-        )
-            .toList(),
-      ),
-    )
-        .toList();
+  discoverServices() async {
+
+    List<BluetoothService> services = await device.discoverServices();
+    services.forEach((service) {
+      if (service.uuid.toString() == SERVICE_UUID) {
+        service.characteristics.forEach((characteristics) {
+          if (characteristics.uuid.toString() == CHARACTERISTIC_UUID) {
+            targetCharacteristic = characteristics;
+          }
+        });
+      }
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -268,8 +274,8 @@ class DeviceScreen extends StatelessWidget {
                     index: snapshot.data ? 1 : 0,
                     children: <Widget>[
                       IconButton(
-                        icon: Icon(Icons.refresh),
-                        onPressed: () => device.discoverServices(),
+                        icon: Icon(Icons.settings_remote),
+                        onPressed: () => discoverServices(),
                       ),
                       IconButton(
                         icon: SizedBox(
@@ -286,27 +292,44 @@ class DeviceScreen extends StatelessWidget {
                 ),
               ),
             ),
-            StreamBuilder<int>(
-              stream: device.mtu,
-              initialData: 0,
-              builder: (c, snapshot) => ListTile(
-                title: Text('MTU Size'),
-                subtitle: Text('${snapshot.data} bytes'),
-                trailing: IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () => device.requestMtu(223),
-                ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: RaisedButton(
+                onPressed: sleepAction,
+                color: Colors.redAccent,
+                child: Text('Enter Sleep Mode'),
               ),
             ),
-            StreamBuilder<List<BluetoothService>>(
-              stream: device.services,
-              initialData: [],
-              builder: (c, snapshot) {
-                return Column(
-                  children: _buildServiceTiles(snapshot.data),
-                );
-              },
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: RaisedButton(
+                onPressed: emailAction,
+                color: Colors.redAccent,
+                child: Text('Send Test Email'),
+              ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: TextField(
+                controller: moduleController,
+                decoration: InputDecoration(labelText: 'Module Number'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: TextField(
+                controller: locationController,
+                decoration: InputDecoration(labelText: 'Location'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: RaisedButton(
+                onPressed: configAction,
+                color: Colors.redAccent,
+                child: Text('Configure'),
+              ),
+            )
           ],
         ),
       ),
